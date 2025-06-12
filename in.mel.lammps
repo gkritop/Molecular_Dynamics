@@ -1,0 +1,28 @@
+units metal 
+dimension 3 
+boundary p p p 
+atom_style atomic 
+
+read_data germanium.data
+
+# ---------- Define Interatomic Potential --------------------- 
+pair_style sw 
+pair_coeff * * ge.sw Ge
+neighbor 5.0 bin 
+neigh_modify delay 10 check yes 
+ 
+# ---------- Define Settings --------------------- 
+compute eng all pe/atom 
+
+# ---------- Run Minimization --------------------- 
+velocity all create 1600 3213112 dist gaussian
+thermo 5000 
+variable kinetic_energy equal ke
+variable temperature equal temp
+variable potential_energy equal pe
+variable pressure equal press
+fix myat1 all ave/time 1 100000 100000 v_kinetic_energy v_potential_energy v_temperature file energy.dat
+fix mynvt1 all nvt temp 1600 1600 0.1
+timestep 0.001
+dump mydmp all custom 100000 dump.T.* id type x y z vx vy vz
+run 200000

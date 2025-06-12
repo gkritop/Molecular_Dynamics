@@ -1,0 +1,44 @@
+units metal 
+dimension 3 
+boundary p p p 
+atom_style atomic 
+
+read_data germanium.data
+
+# ---------- Interatomic Potential ---------------------
+pair_style sw 
+pair_coeff * * ge.sw Ge
+
+neighbor 5.0 bin 
+neigh_modify delay 10 check yes 
+
+# ---------- Computes ---------------------
+compute eng all pe/atom 
+
+# ---------------- T = 0 K ----------------
+min_style cg
+minimize 1.0e-10 1.0e-10 10000 100000
+
+dump dump0 all custom 1 dump.T.0 id type x y z
+run 0
+undump dump0
+
+# ---------------- T = 1600 K ----------------
+velocity all create 1600 12345 dist gaussian
+fix nvt1600 all nvt temp 1600 1600 0.1
+run 200000
+unfix nvt1600
+
+dump dump1600 all custom 1 dump.T.1600 id type x y z
+run 0
+undump dump1600
+
+# ---------------- T = 1700 K ----------------
+velocity all create 2000 54321 dist gaussian
+fix nvt2000 all nvt temp 2000 2000 0.1
+run 200000
+unfix nvt2000
+
+dump dump2000 all custom 1 dump.T.2000 id type x y z
+run 0
+undump dump2000

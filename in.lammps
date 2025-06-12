@@ -1,0 +1,34 @@
+units metal 
+dimension 3 
+boundary p p p 
+atom_style atomic 
+
+# read_data
+
+read_data Ge2.80.sc.data
+
+# ---------- Define Interatomic Potential --------------------- 
+pair_style sw 
+pair_coeff * * ge.sw Ge
+neighbor 5.0 bin 
+neigh_modify delay 10 check yes 
+ 
+# ---------- Define Settings --------------------- 
+compute eng all pe/atom 
+
+# ---------- Run Minimization --------------------- 
+thermo 1
+thermo_style custom step pe  
+#dump  10 all custom 1 dump.* id type x y z
+min_style cg 
+minimize 1e-25 1e-25 5000 10000 
+
+variable natoms equal "count(all)" 
+variable teng equal "pe"
+variable ecoh equal "v_teng/v_natoms"
+
+print "Total energy (eV) = ${teng};"
+print "Number of atoms = ${natoms};"
+print "Cohesive energy (eV) = ${ecoh};"
+
+print "All done!" 

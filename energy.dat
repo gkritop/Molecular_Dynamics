@@ -1,0 +1,4 @@
+# Time-averaged data for fix myat1
+# TimeStep v_kinetic_energy v_potential_energy v_temperature
+100000 44.6216 -738.617 1605.62
+200000 44.3716 -738.614 1596.62
